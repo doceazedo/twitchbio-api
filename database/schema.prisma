@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int @id @unique
+  pronouns    UserPronoun[]
+  badge       String?
+  color       String?
+  twitchOauth String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model UserPronoun {
+  pronoun   Pronoun @relation(fields: [pronounId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  pronounId Int
+  userId    Int
+
+  @@id([pronounId, userId])
+}
+
+model Pronoun {
+  id      Int @id @default(autoincrement())
+  pronoun String
+  users UserPronoun[]
+}
